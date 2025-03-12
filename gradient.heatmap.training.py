@@ -19,7 +19,7 @@ import gc
 from captum.attr import IntegratedGradients, NoiseTunnel
 from matplotlib.colors import LinearSegmentedColormap
 
-# Ignorowanie ostrzeżeń (opcjonalne)
+# Ignorowanie ostrzeżeń
 warnings.filterwarnings("ignore", category=UserWarning)
 warnings.filterwarnings("ignore", category=FutureWarning)
 
@@ -54,7 +54,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 num_classes = 5
 learning_rate = 3e-5
 batch_size = 32
-num_epochs = 40  # Zmieniono na 40 epok zgodnie z nazwą modelu
+num_epochs = 40
 model_name = "efficientnet_b0"
 
 # Definicja custom colormap
@@ -66,7 +66,7 @@ custom_cmap = LinearSegmentedColormap.from_list('custom_black_white',
 
 # Transformacje
 transform = transforms.Compose([
-    transforms.Resize((128, 128)),  # Używamy rozmiaru 224x224
+    transforms.Resize((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406],
                          std=[0.229, 0.224, 0.225]),
@@ -149,11 +149,9 @@ for param in model.parameters():
     param.requires_grad = False
 
 # Odblokowanie warstwy docelowej dla Grad-CAM
-# Dla EfficientNet_B0, ostatnia warstwa konwolucyjna to features[-1][0]
 for param in model.features[-1][0].parameters():
     param.requires_grad = True
 
-# Zmiana ostatniej warstwy klasyfikacyjnej
 # EfficientNet_B0 ma classifier = nn.Sequential(
 #     nn.Dropout(p=0.2, inplace=True),
 #     nn.Linear(in_features=1280, out_features=1000),
@@ -301,7 +299,7 @@ def save_heatmap_and_attributions(image_path, cam, input_image, pred_class, outp
             print(f"Nie można wczytać obrazu z {image_path}.")
             return
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img = cv2.resize(img, (128, 128))  # Dostosowanie do rozmiaru transformacji
+        img = cv2.resize(img, 224, 224))
 
         # Heatmap
         heatmap = cv2.resize(cam, (img.shape[1], img.shape[0]))
