@@ -37,7 +37,7 @@ class ResNet10(ResNet):
     def __init__(self, num_classes=5):
         super().__init__(block=BasicBlock, layers=[1,1,1,1], num_classes=num_classes)
 
-# Klasa modelu z dropoutem
+# Klasa modelu
 class LightLevelClassifier(nn.Module):
     def __init__(self, n_classes=5, dropout_prob=0.5):
         super(LightLevelClassifier, self).__init__()
@@ -45,7 +45,6 @@ class LightLevelClassifier(nn.Module):
         self.dropout = nn.Dropout(p=dropout_prob)
 
     def forward(self, x):
-        # Ręczne wywołanie warstw ResNet10, aby wstawić dropout przed FC
         x = self.resnet.conv1(x)
         x = self.resnet.bn1(x)
         x = self.resnet.relu(x)
